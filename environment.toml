@@ -1,0 +1,6 @@
+[mongo]
+uri = ""
+db = ""
+
+[info]
+version = "asd"

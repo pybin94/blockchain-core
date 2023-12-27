@@ -14,5 +14,5 @@ var (
 func main() {
 	flag.Parse()
 	c := config.NewConfig(*confingFlag)
-	app.NewApp(c)
+	app.NewApp(c, 1)
 }

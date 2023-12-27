@@ -3,6 +3,7 @@ package repository
 import (
 	"block_chain/config"
 	"context"
+	"time"
 
 	"github.com/inconshreveable/log15"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -11,15 +12,16 @@ import (
 
 type Repository struct {
 	client *mongo.Client
-	config *config.Config
-	db     *mongo.Database
-	log    log15.Logger
+
+	wallet *mongo.Collection
+	tx     *mongo.Collection
+
+	log log15.Logger
 }
 
 func NewRepository(config *config.Config) (*Repository, error) {
 	r := &Repository{
-		config: config,
-		log:    log15.New("module", "repository"),
+		log: log15.New("module", "repository"),
 	}
 
 	var err error
@@ -34,11 +36,12 @@ func NewRepository(config *config.Config) (*Repository, error) {
 		r.log.Error("failed to ping to mongo", "uri", mongoConfig.Uri)
 		return nil, err
 	} else {
-		r.db = r.client.Database(mongoConfig.DB)
+		db := r.client.Database(config.Mongo.DB, nil)
 
-		// TODO => 컬랙션 연결
+		r.wallet = db.Collection("wallet")
+		r.tx = db.Collection("wallet")
 
-		r.log.Info("success to connect Repository", "uri", mongoConfig.Uri, "db", mongoConfig.DB)
+		r.log.Info("Success To Connect Repository", "info", time.Now().Unix(), "repository", config.Mongo.Uri)
 		return r, nil
 	}
 }

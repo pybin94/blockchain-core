@@ -48,9 +48,20 @@ func (s *Service) MakeWallet() *types.Wallet {
 
 	if wallet.PrivateKey, wallet.PublicKey, err = s.newWallet(); err != nil {
 		panic(err)
-	} else if err = s.repository.CreateNewWallet(&wallet); err != nil {
+	}
+
+	if err = s.repository.CreateNewWallet(&wallet); err != nil {
 		return nil
 	} else {
 		return &wallet
+	}
+}
+
+func (s *Service) GetWallet(pk string) (*types.Wallet, error) {
+	if wallet, err := s.repository.GetWallet(pk); err != nil {
+		return nil, err
+	} else {
+		fmt.Println(wallet)
+		return wallet, nil
 	}
 }

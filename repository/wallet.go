@@ -19,7 +19,7 @@ func (r *Repository) CreateNewWallet(wallet *types.Wallet) error {
 	filter := bson.M{"privateKey": wallet.PrivateKey}
 	update := bson.M{"$set": bson.M{
 		"privateKey": wallet.PrivateKey,
-		"pubilcKey":  wallet.PublicKey,
+		"publicKey":  wallet.PublicKey,
 		"time":       wallet.Time,
 	}}
 

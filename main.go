@@ -8,11 +8,11 @@ import (
 
 var (
 	confingFlag = flag.String("environment", "./environment.toml", "environment toml file not found")
-	difficulty  = flag.Int("difficuty", 12, "difficulty err")
+	difficulty  = flag.Int("difficuty", 17, "difficulty err")
 )
 
 func main() {
 	flag.Parse()
 	c := config.NewConfig(*confingFlag)
-	app.NewApp(c, 1)
+	app.NewApp(c, int64(*difficulty))
 }

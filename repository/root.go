@@ -15,6 +15,7 @@ type Repository struct {
 
 	wallet *mongo.Collection
 	tx     *mongo.Collection
+	block  *mongo.Collection
 
 	log log15.Logger
 }
@@ -39,7 +40,8 @@ func NewRepository(config *config.Config) (*Repository, error) {
 		db := r.client.Database(config.Mongo.DB, nil)
 
 		r.wallet = db.Collection("wallet")
-		r.tx = db.Collection("wallet")
+		r.tx = db.Collection("tx")
+		r.block = db.Collection("block")
 
 		r.log.Info("Success To Connect Repository", "info", time.Now().Unix(), "repository", config.Mongo.Uri)
 		return r, nil

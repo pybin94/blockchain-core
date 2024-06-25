@@ -36,7 +36,7 @@ func NewApp(config *config.Config, difficulty int64) {
 		panic(err)
 	}
 
-	a.service = service.NewService(a.repository, 1)
+	a.service = service.NewService(a.repository, difficulty)
 
 	sc := bufio.NewScanner(os.Stdin)
 	useCase()
@@ -78,7 +78,6 @@ func (a *App) inputValueAssessment(input []string) error {
 			}
 
 		case ConnectWallet:
-
 			if from != "" {
 				a.log.Debug("Already Connected", "from", from)
 			} else {
@@ -91,15 +90,12 @@ func (a *App) inputValueAssessment(input []string) error {
 					fmt.Println()
 				} else {
 					global.SetFrom(wallet.PublicKey)
-					fmt.Println("@@")
-					fmt.Println(wallet.PublicKey)
 					a.log.Info("Success To Connect Wallet", "from", wallet.PublicKey)
 					fmt.Println()
 				}
 			}
 
 		case ChangeWallet:
-
 			if from == "" {
 				a.log.Debug("Connect Wallet First")
 			} else {
@@ -113,13 +109,18 @@ func (a *App) inputValueAssessment(input []string) error {
 				} else {
 					global.SetFrom(wallet.PublicKey)
 					fmt.Println()
-					a.log.Info("Success To Change Wallet", "from", wallet.PublicKey)
+					if from == wallet.PublicKey {
+						a.log.Debug("Already The Same Address", "from", wallet.PublicKey)
+					} else {
+						a.log.Info("Success To Change Wallet", "from", wallet.PublicKey)
+					}
 					fmt.Println()
 				}
 			}
 
 		case TransferCoin:
 			fmt.Println("TransferCoin in Switch")
+			a.service.CreateBlock([]*Transactions{}, []byte{}, 0)
 
 		case OppsCoin:
 			fmt.Println("OppsCoin in Switch")

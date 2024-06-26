@@ -120,7 +120,7 @@ func (a *App) inputValueAssessment(input []string) error {
 
 		case TransferCoin:
 			fmt.Println("TransferCoin in Switch")
-			a.service.CreateBlock([]*Transactions{}, []byte{}, 0)
+			a.service.CreateBlock([]*Transaction{}, []byte{}, 0)
 
 		case OppsCoin:
 			fmt.Println("OppsCoin in Switch")

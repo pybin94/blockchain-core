@@ -7,14 +7,14 @@ type Wallet struct {
 }
 
 type Block struct {
-	Time         int64           `json:"time"`
-	Hash         []byte          `json:"hash"`
-	PrevHash     []byte          `json:"prevHash"`
-	Nonce        int64           `json:"nonce"`
-	Height       int64           `json:"height"`
-	Transactions []*Transactions `json:"transactions"`
+	Time         int64          `json:"time"`
+	Hash         []byte         `json:"hash"`
+	PrevHash     []byte         `json:"prevHash"`
+	Nonce        int64          `json:"nonce"`
+	Height       int64          `json:"height"`
+	Transactions []*Transaction `json:"transaction"`
 }
-type Transactions struct {
+type Transaction struct {
 	Block   int64  `json:"block"`
 	Time    int64  `json:"time"`
 	From    string `json:"from"`

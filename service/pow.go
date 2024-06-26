@@ -51,6 +51,7 @@ func (p *PowWork) makeHash(nonce int) []byte {
 	return bytes.Join(
 		[][]byte{
 			p.Block.PrevHash,
+			HashTransactions(p.Block),
 			intToHex(p.Difficulty),
 			intToHex(int64(nonce)),
 		},
@@ -59,6 +60,8 @@ func (p *PowWork) makeHash(nonce int) []byte {
 }
 
 func intToHex(number int64) []byte {
+	// 300 -> 0x012C
+	// binary.BigEndian -> 01
 	b := new(bytes.Buffer)
 
 	if err := binary.Write(b, binary.BigEndian, number); err != nil {

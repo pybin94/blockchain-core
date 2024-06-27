@@ -20,3 +20,23 @@ func (r *Repository) GetLatestBlock() (*types.Block, error) {
 		return &block, nil
 	}
 }
+
+func (r *Repository) SaveBlock(newBlock *types.Block) error {
+	ctx := context.Background()
+
+	filter := bson.M{"hash": newBlock.Hash}
+	update := bson.M{"$set": bson.M{
+		"time":         newBlock.Time,
+		"hash":         newBlock.Hash,
+		"prevHash":     newBlock.PrevHash,
+		"nonce":        newBlock.Nonce,
+		"height":       newBlock.Height,
+		"Transactions": newBlock.Transactions,
+	}}
+
+	if _, err := r.block.UpdateOne(ctx, filter, update, options.Update().SetUpsert(true)); err != nil {
+		return err
+	} else {
+		return nil
+	}
+}

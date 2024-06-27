@@ -8,8 +8,8 @@ type Wallet struct {
 
 type Block struct {
 	Time         int64          `json:"time"`
-	Hash         []byte         `json:"hash"`
-	PrevHash     []byte         `json:"prevHash"`
+	Hash         string         `json:"hash"`
+	PrevHash     string         `json:"prevHash"`
 	Nonce        int64          `json:"nonce"`
 	Height       int64          `json:"height"`
 	Transactions []*Transaction `json:"transaction"`

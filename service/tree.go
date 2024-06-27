@@ -31,6 +31,10 @@ func NewMerkleNode(left, right *MerkleNode, data []byte) *MerkleNode {
 }
 
 func NewMerkleTree(data [][]byte) *MerkleTree {
+	if data == nil {
+		return &MerkleTree{RootNode: &MerkleNode{Data: []byte{}}}
+	}
+
 	var nodes []MerkleNode
 
 	for _, d := range data {

@@ -3,6 +3,7 @@ package repository
 import (
 	"block_chain/types"
 	"context"
+	"fmt"
 	"strconv"
 	"time"
 
@@ -35,6 +36,20 @@ func (r *Repository) GetWallet(pk string) (*types.Wallet, error) {
 
 	filter := bson.M{"privateKey": pk}
 
+	var wallet types.Wallet
+
+	if err := r.wallet.FindOne(ctx, filter, options.FindOne()).Decode(&wallet); err != nil {
+		return nil, err
+	} else {
+		return &wallet, nil
+	}
+}
+
+func (r *Repository) GetWalletByPublicKey(publicKey string) (*types.Wallet, error) {
+	ctx := context.Background()
+
+	filter := bson.M{"publicKey": publicKey}
+	fmt.Println(filter)
 	var wallet types.Wallet
 
 	if err := r.wallet.FindOne(ctx, filter, options.FindOne()).Decode(&wallet); err != nil {

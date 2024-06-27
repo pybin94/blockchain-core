@@ -8,47 +8,53 @@ import (
 	"encoding/gob"
 	"encoding/hex"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/ethereum/go-ethereum/crypto"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func (s *Service) CreateBlock(txs []*types.Transaction, prevHash []byte, height int64) *types.Block {
-	var pHash []byte
+func (s *Service) CreateBlock(txs []*types.Transaction, prevHash []byte, from string) *types.Block {
 
-	if latesBlock, err := s.repository.GetLatestBlock(); err != nil {
-		if err == mongo.ErrNoDocuments {
-			s.log.Info("Genesis Block Will Be Created")
-			genesisMessage := "This Is First Genesis Block"
-			tx := createTransaction(genesisMessage, "publicKey", "", "", 1)
-
-			newBlock := createBlickInner([]*types.Transaction{tx}, pHash, height)
-
-			pow := s.NewPow(newBlock)
-			newBlock.Nonce, newBlock.Hash = pow.RunMining()
-
-			return newBlock
-		} else {
-			s.log.Crit("Failed To Get Latest Block")
-			panic(err)
-		}
+	if wallet, err := s.repository.GetWalletByPublicKey(from); err != nil {
+		panic(err)
 	} else {
-		pHash = latesBlock.Hash
+		var block *types.Block
 
-		newBlock := createBlickInner(txs, pHash, height)
-		pow := s.NewPow(newBlock)
+		latesBlock, err := s.repository.GetLatestBlock()
 
-		newBlock.Nonce, newBlock.Hash = pow.RunMining()
+		if err != nil {
+			if err == mongo.ErrNoDocuments {
+				s.log.Info("Genesis Block Will Be Created")
+				genesisMessage := "This Is First Genesis Block"
 
-		return newBlock
+				tx := createTransaction(genesisMessage, from, strings.TrimPrefix(wallet.PrivateKey, "0x"), "", "", 1)
+
+				block = createBlickInner([]*types.Transaction{tx}, "", 1)
+
+				pow := s.NewPow(block)
+				block.Nonce, block.Hash = pow.RunMining()
+			}
+		} else {
+			block = createBlickInner(txs, latesBlock.Hash, latesBlock.Height+1)
+		}
+
+		pow := s.NewPow(block)
+		block.Nonce, block.Hash = pow.RunMining()
+
+		if err := s.repository.SaveBlock(block); err != nil {
+			panic(err)
+		} else {
+			return block
+		}
 	}
 }
 
-func createBlickInner(txs []*types.Transaction, prevHash []byte, height int64) *types.Block {
+func createBlickInner(txs []*types.Transaction, prevHash string, height int64) *types.Block {
 	return &types.Block{
 		Time:         time.Now().Unix(),
-		Hash:         []byte{},
+		Hash:         "",
 		Transactions: txs,
 		PrevHash:     prevHash,
 		Nonce:        0,
@@ -56,7 +62,7 @@ func createBlickInner(txs []*types.Transaction, prevHash []byte, height int64) *
 	}
 }
 
-func createTransaction(message, from, to, amount string, block int64) *types.Transaction {
+func createTransaction(message, from, pk, to, amount string, block int64) *types.Transaction {
 	data := struct {
 		Message string `json:"message"`
 		From    string `json:"from"`
@@ -71,7 +77,8 @@ func createTransaction(message, from, to, amount string, block int64) *types.Tra
 
 	dataToSign := fmt.Sprintf("%x\n", data)
 
-	pk := ""
+	fmt.Println("pk", pk)
+	fmt.Println(crypto.HexToECDSA(pk))
 
 	if ecdsaPrivateKey, err := crypto.HexToECDSA(pk); err != nil {
 		panic(err)

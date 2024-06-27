@@ -67,7 +67,7 @@ func (a *App) inputValueAssessment(input []string) error {
 		from := global.FROM()
 
 		switch input[0] {
-		case CreateWallet:
+		case "1":
 			fmt.Println("CreateWallet in Switch")
 			if wallet := a.service.MakeWallet(); wallet == nil {
 				panic("failed to create")
@@ -77,7 +77,7 @@ func (a *App) inputValueAssessment(input []string) error {
 				fmt.Println()
 			}
 
-		case ConnectWallet:
+		case "2":
 			if from != "" {
 				a.log.Debug("Already Connected", "from", from)
 			} else {
@@ -95,7 +95,7 @@ func (a *App) inputValueAssessment(input []string) error {
 				}
 			}
 
-		case ChangeWallet:
+		case "3":
 			if from == "" {
 				a.log.Debug("Connect Wallet First")
 			} else {
@@ -118,12 +118,26 @@ func (a *App) inputValueAssessment(input []string) error {
 				}
 			}
 
-		case TransferCoin:
-			fmt.Println("TransferCoin in Switch")
-			a.service.CreateBlock([]*Transaction{}, []byte{}, 0)
+		case "4":
+			if from == "" {
+				fmt.Println()
+				a.log.Debug("Connect Wallet First")
+				fmt.Println()
+			} else {
+				fmt.Println()
+				fmt.Println("TransferCoin in Switch")
+				a.service.CreateBlock([]*Transaction{}, []byte{}, from)
+				fmt.Println()
+			}
 
-		case OppsCoin:
-			fmt.Println("OppsCoin in Switch")
+		case "5":
+
+			if from == "" {
+				a.log.Debug("Connect Wallet First")
+			} else {
+				fmt.Println("OppsCoin in Switch")
+				a.service.CreateBlock([]*Transaction{}, []byte{}, from)
+			}
 
 		case "":
 			fmt.Println()

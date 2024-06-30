@@ -12,6 +12,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/inconshreveable/log15"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -60,6 +61,9 @@ func NewApp(config *config.Config, difficulty int64) {
 
 func (a *App) inputValueAssessment(input []string) error {
 	msg := errors.New("Check Use Case")
+
+	fmt.Println("input", input, len(input))
+
 	if len(input) == 0 {
 		return msg
 	} else {
@@ -67,7 +71,7 @@ func (a *App) inputValueAssessment(input []string) error {
 		from := global.FROM()
 
 		switch input[0] {
-		case "1":
+		case CreateWallet:
 			fmt.Println("CreateWallet in Switch")
 			if wallet := a.service.MakeWallet(); wallet == nil {
 				panic("failed to create")
@@ -77,7 +81,7 @@ func (a *App) inputValueAssessment(input []string) error {
 				fmt.Println()
 			}
 
-		case "2":
+		case ConnectWallet:
 			if from != "" {
 				a.log.Debug("Already Connected", "from", from)
 			} else {
@@ -95,7 +99,7 @@ func (a *App) inputValueAssessment(input []string) error {
 				}
 			}
 
-		case "3":
+		case ChangeWallet:
 			if from == "" {
 				a.log.Debug("Connect Wallet First")
 			} else {
@@ -118,25 +122,29 @@ func (a *App) inputValueAssessment(input []string) error {
 				}
 			}
 
-		case "4":
+		case TransferCoin:
 			if from == "" {
 				fmt.Println()
 				a.log.Debug("Connect Wallet First")
+				fmt.Println()
+			} else if len(input) < 3 {
+				fmt.Println()
+				a.log.Debug("Request value, to is unCorrect")
 				fmt.Println()
 			} else {
 				fmt.Println()
 				fmt.Println("TransferCoin in Switch")
-				a.service.CreateBlock([]*Transaction{}, []byte{}, from)
+				a.service.CreateBlock(from, input[1], input[2])
 				fmt.Println()
 			}
 
-		case "5":
-
-			if from == "" {
-				a.log.Debug("Connect Wallet First")
+		case OppsCoin:
+			if len(input) < 3 {
+				fmt.Println()
+				a.log.Debug("Request value, to is unCorrect")
+				fmt.Println()
 			} else {
-				fmt.Println("OppsCoin in Switch")
-				a.service.CreateBlock([]*Transaction{}, []byte{}, from)
+				a.service.CreateBlock((common.Address{}).String(), input[1], input[2])
 			}
 
 		case "":
@@ -145,6 +153,8 @@ func (a *App) inputValueAssessment(input []string) error {
 		default:
 			return errors.New("failed to find cli order")
 		}
+
+		fmt.Println("Success To Mining")
 	}
 	return nil
 }
@@ -155,10 +165,10 @@ func useCase() {
 	fmt.Println()
 	fmt.Println("Use Case")
 	fmt.Println()
-	fmt.Println("1. ", CreateWallet)
-	fmt.Println("2. ", ConnectWallet, "<PK>")
-	fmt.Println("3. ", ChangeWallet, "<PK>")
-	fmt.Println("4. ", TransferCoin, "<To> <Amount>")
-	fmt.Println("5. ", OppsCoin, "<To> <Amount>")
+	fmt.Println("1. ", "CreateWallet")
+	fmt.Println("2. ", "ConnectWallet", "<PK>")
+	fmt.Println("3. ", "ChangeWallet", "<PK>")
+	fmt.Println("4. ", "TransferCoin", "<To> <Amount>")
+	fmt.Println("5. ", "OppsCoin", "<To> <Amount>")
 	fmt.Println()
 }

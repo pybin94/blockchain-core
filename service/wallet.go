@@ -12,7 +12,7 @@ import (
 	"github.com/ethereum/go-ethereum/crypto"
 )
 
-func (s *Service) newWallet() (string, string, error) {
+func (s *Service) newKeyPair() (string, string, error) {
 	p256 := elliptic.P256()
 	if private, err := ecdsa.GenerateKey(p256, rand.Reader); err != nil {
 		return "", "", err
@@ -43,10 +43,12 @@ func (s *Service) newWallet() (string, string, error) {
 }
 
 func (s *Service) MakeWallet() *types.Wallet {
-	var wallet types.Wallet
+	wallet := types.Wallet{
+		Balance: "0",
+	}
 	var err error
 
-	if wallet.PrivateKey, wallet.PublicKey, err = s.newWallet(); err != nil {
+	if wallet.PrivateKey, wallet.PublicKey, err = s.newKeyPair(); err != nil {
 		panic(err)
 	}
 

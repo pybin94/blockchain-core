@@ -3,6 +3,7 @@ package types
 type Wallet struct {
 	PrivateKey string `json:"privateKey"`
 	PublicKey  string `json:"publicKey"`
+	Balance    string `json:"balance"`
 	Time       string `json:"time"`
 }
 

@@ -138,7 +138,7 @@ func (a *App) inputValueAssessment(input []string) error {
 				fmt.Println()
 			}
 
-		case OppsCoin:
+		case OopsCoin:
 			if len(input) < 3 {
 				fmt.Println()
 				a.log.Debug("Request value, to is unCorrect")
@@ -161,7 +161,7 @@ func (a *App) inputValueAssessment(input []string) error {
 
 func useCase() {
 	fmt.Println()
-	fmt.Println("This is Opps Module For BlockChain Core With Mongo")
+	fmt.Println("This is oops Module For BlockChain Core With Mongo")
 	fmt.Println()
 	fmt.Println("Use Case")
 	fmt.Println()
@@ -169,6 +169,6 @@ func useCase() {
 	fmt.Println("2. ", "ConnectWallet", "<PK>")
 	fmt.Println("3. ", "ChangeWallet", "<PK>")
 	fmt.Println("4. ", "TransferCoin", "<To> <Amount>")
-	fmt.Println("5. ", "OppsCoin", "<To> <Amount>")
+	fmt.Println("5. ", "oopsCoin", "<To> <Amount>")
 	fmt.Println()
 }

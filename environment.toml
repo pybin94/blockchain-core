@@ -3,4 +3,4 @@ uri = "mongodb://localhost:27017"
 db = "blockchain"
 
 [info]
-version = "asd"
+version = "0.99"
